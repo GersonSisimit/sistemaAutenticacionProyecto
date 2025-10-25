@@ -4,81 +4,135 @@
     ViewData["Title"] = "Gestión de Vehículos";
 }
 
-<h2>Gestión de Vehículos</h2>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="fw-bold text-success">
+            <i class="bi bi-car-front"></i> Gestión de Vehículos
+        </h3>
+        <a asp-action="Create" asp-controller="Vehicles" class="btn btn-success">
+            <i class="bi bi-plus-circle"></i> Nuevo Vehículo
+        </a>
+    </div>
 
-<table class="table table-bordered">
-    <thead class="table-dark">
-        <tr>
-            <th>Id</th>
-            <th>Marca</th>
-            <th>Modelo</th>
-            <th>Año</th>
-            <th>Precio</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var v in Model)
-        {
-            <tr>
-                <td>@v.Id</td>
-                <td>@v.Brand</td>
-                <td>@v.Model</td>
-                <td>@v.Year</td>
-                <td>@v.Price.ToString("N2")</td>
-                <td>
-                    <!-- Botón que abre el modal -->
-                    <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editModal@(v.Id)">
-                        Editar
-                    </button>
-                    <form asp-action="Delete" asp-controller="Vehicles" method="post" style="display:inline;">
-                        <input type="hidden" name="id" value="@v.Id" />
-                        <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
-                    </form>
-                </td>
-            </tr>
+    <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-body p-4">
+            <table class="table table-hover align-middle">
+                <thead class="table-success text-center">
+                    <tr>
+                        <th>ID</th>
+                        <th>Marca</th>
+                        <th>Modelo</th>
+                        <th>Año</th>
+                        <th>Precio (Q)</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody class="text-center">
+                    @if (Model == null || !Model.Any())
+                    {
+                        <tr>
+                            <td colspan="6" class="text-muted py-4">
+                                <i class="bi bi-info-circle"></i> No hay vehículos registrados.
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var v in Model)
+                        {
+                            <tr>
+                                <td>@v.Id</td>
+                                <td>@v.Brand</td>
+                                <td>@v.Model</td>
+                                <td>@v.Year</td>
+                                <td>@v.Price.ToString("N2")</td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary me-1"
+                                            data-bs-toggle="tooltip" title="Editar"
+                                            data-bs-toggle="modal" data-bs-target="#editModal@(v.Id)">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </button>
 
-            <!-- Modal Editar (por cada vehículo) -->
-            <div class="modal fade" id="editModal@(v.Id)" tabindex="-1" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header bg-primary text-white">
-                            <h5 class="modal-title">Editar Vehículo (@v.Brand - @v.Model)</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                        </div>
-                        <div class="modal-body">
-                            <form asp-action="Edit" asp-controller="Vehicles" method="post">
-                                <input type="hidden" name="id" value="@v.Id" />
+                                    <form asp-action="Delete" asp-controller="Vehicles" method="post" class="d-inline">
+                                        <input type="hidden" name="id" value="@v.Id" />
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" data-bs-toggle="tooltip" title="Eliminar"
+                                                onclick="return confirm('¿Seguro que desea eliminar este vehículo?');">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
 
-                                <div class="mb-3">
-                                    <label>Marca</label>
-                                    <input type="text" name="brand" value="@v.Brand" class="form-control" required />
+                            <!-- Modal Editar -->
+                            <div class="modal fade" id="editModal@(v.Id)" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content rounded-4 shadow">
+                                        <div class="modal-header bg-success text-white rounded-top-4">
+                                            <h5 class="modal-title">
+                                                <i class="bi bi-pencil-square"></i> Editar Vehículo
+                                            </h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                                        </div>
+
+                                        <div class="modal-body">
+                                            <form asp-action="Edit" asp-controller="Vehicles" method="post">
+                                                <input type="hidden" name="id" value="@v.Id" />
+
+                                                <div class="mb-3">
+                                                    <label class="form-label fw-semibold">
+                                                        <i class="bi bi-building"></i> Marca
+                                                    </label>
+                                                    <input type="text" name="brand" value="@v.Brand" class="form-control" required />
+                                                </div>
+
+                                                <div class="mb-3">
+                                                    <label class="form-label fw-semibold">
+                                                        <i class="bi bi-card-text"></i> Modelo
+                                                    </label>
+                                                    <input type="text" name="model" value="@v.Model" class="form-control" required />
+                                                </div>
+
+                                                <div class="mb-3">
+                                                    <label class="form-label fw-semibold">
+                                                        <i class="bi bi-calendar3"></i> Año
+                                                    </label>
+                                                    <input type="number" name="year" value="@v.Year" class="form-control" min="1900" max="@DateTime.Now.Year" required />
+                                                </div>
+
+                                                <div class="mb-3">
+                                                    <label class="form-label fw-semibold">
+                                                        <i class="bi bi-currency-dollar"></i> Precio
+                                                    </label>
+                                                    <input type="number" step="0.01" name="price" value="@v.Price" class="form-control" required />
+                                                </div>
+
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                        <i class="bi bi-x-circle"></i> Cancelar
+                                                    </button>
+                                                    <button type="submit" class="btn btn-success">
+                                                        <i class="bi bi-check-circle"></i> Guardar cambios
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
                                 </div>
+                            </div>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 
-                                <div class="mb-3">
-                                    <label>Modelo</label>
-                                    <input type="text" name="model" value="@v.Model" class="form-control" required />
-                                </div>
-
-                                <div class="mb-3">
-                                    <label>Año</label>
-                                    <input type="number" name="year" value="@v.Year" class="form-control" required />
-                                </div>
-
-                                <div class="mb-3">
-                                    <label>Precio</label>
-                                    <input type="number" step="0.01" name="price" value="@v.Price" class="form-control" required />
-                                </div>
-
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                    <button type="submit" class="btn btn-success">Guardar cambios</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        }
-    </tbody>
-</table>
+@section Scripts {
+    <script>
+        // Inicializar tooltips Bootstrap
+        document.addEventListener('DOMContentLoaded', function () {
+            const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+            [...tooltipTriggerList].map(t => new bootstrap.Tooltip(t));
+        });
+    </script>
+}

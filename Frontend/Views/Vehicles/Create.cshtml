@@ -2,40 +2,56 @@
     ViewData["Title"] = "Crear Vehículo";
 }
 
-<div class="row justify-content-center mt-4">
-    <div class="col-md-6">
-        <div class="card shadow">
-            <div class="card-body">
-                <h4 class="mb-3">Crear Vehículo</h4>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-header bg-success text-white text-center rounded-top-4 py-3">
+                    <h4 class="mb-0"><i class="bi bi-car-front"></i> Crear Vehículo</h4>
+                </div>
 
-                <form asp-action="Create" method="post">
-                    <div class="form-group mb-3">
-                        <label>Marca</label>
-                        <input name="brand" class="form-control" required />
-                    </div>
+                <div class="card-body p-4">
+                    <form asp-action="Create" method="post">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">
+                                <i class="bi bi-building"></i> Marca
+                            </label>
+                            <input name="brand" class="form-control form-control-lg" placeholder="Ej: Toyota" required />
+                        </div>
 
-                    <div class="form-group mb-3">
-                        <label>Modelo</label>
-                        <input name="model" class="form-control" required />
-                    </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">
+                                <i class="bi bi-card-text"></i> Modelo
+                            </label>
+                            <input name="model" class="form-control form-control-lg" placeholder="Ej: Corolla" required />
+                        </div>
 
-                    <div class="form-group mb-3">
-                        <label>Año</label>
-                        <input name="year" type="number" class="form-control" required />
-                    </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">
+                                <i class="bi bi-calendar3"></i> Año
+                            </label>
+                            <input name="year" type="number" min="1900" max="@DateTime.Now.Year" class="form-control form-control-lg" placeholder="Ej: 2022" required />
+                        </div>
 
-                    <div class="form-group mb-3">
-                        <label>Precio</label>
-                        <input name="price" type="number" step="0.01" class="form-control" required />
-                    </div>
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">
+                                <i class="bi bi-currency-dollar"></i> Precio
+                            </label>
+                            <input name="price" type="number" step="0.01" class="form-control form-control-lg" placeholder="Ej: 25000.00" required />
+                        </div>
 
-                    <button type="submit" class="btn btn-success w-100">Guardar</button>
-                </form>
+                        <button type="submit" class="btn btn-success btn-lg w-100 shadow-sm">
+                            <i class="bi bi-check-circle"></i> Guardar Vehículo
+                        </button>
+                    </form>
 
-                @if (ViewBag.Error != null)
-                {
-                    <div class="alert alert-danger mt-3">@ViewBag.Error</div>
-                }
+                    @if (ViewBag.Error != null)
+                    {
+                        <div class="alert alert-danger mt-4">
+                            <i class="bi bi-exclamation-triangle-fill"></i> @ViewBag.Error
+                        </div>
+                    }
+                </div>
             </div>
         </div>
     </div>
