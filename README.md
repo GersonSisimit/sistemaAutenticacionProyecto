@@ -25,3 +25,24 @@ Sistema de **inventario automotriz** con **autenticación robusta** (MFA TOTP, J
 - **Auditoría**  
   - `AuthAttemptLogs`: éxito/fallo, IP, motivo (InvalidPassword, MfaRequired, InvalidOtp, Blocked…), timestamps.  
   - `RequestLogs`: método, path, status, userId, IP, elapsedMs, user-agent, timestamps.
+
+  
+## 🔄 Simulador de tráfico de inicio de sesión
+Se incluye un script tools/login_traffic_simulator.pypara generar tráfico controlado hacia POST /api/auth/loginy así validar el backoff, la auditoría y las reglas de monitoreo.
+
+1. Instale las dependencias del script:
+    pip install -r tools/requirements.txt
+2. Prepare sus credenciales válidas/invalidas en archivos CSV con el formato email,password[,otp]. Puedes incluir varias entradas separadas por salto de línea o ;en la misma línea.
+3. Ejecuta el simulador parametrizando volumen, concurrencia y tasas de éxito:
+python tools/login_traffic_simulator.py \
+    --base-url http://localhost:5000 \
+    --good-credentials data/good_creds.csv \
+    --bad-credentials data/bad_creds.csv \
+    --total-requests 120 --concurrency 12 --success-rate 0.25 \
+    --log-file login_traffic.csv
+Parámetros destacados
+--ip-pool: rota direcciones IP personalizadas o genera rangos con random:<cantidad>.
+--jitter: agregue un retardo aleatorio antes de cada solicitud para simular tráfico más natural.
+--header: permite inyectar encabezados adicionales (por ejemplo, X-Forwarded-Proto=https).
+--log-file: guarda cada intento en CSV (estado, latencia, mensaje de la API, errores de transporte, etc.).
+El resumen final muestra la distribución de respuestas (éxitos, fallos, solicitudes bloqueadas, MFA requerida) y métricas de latencia (promedio, p95, p99).
