@@ -1,10 +1,11 @@
-﻿using AutoInventoryBackend.Data;
+using AutoInventoryBackend.Data;
+using AutoInventoryBackend.Middleware;
 using AutoInventoryBackend.Models;
 using AutoInventoryBackend.Services;
-using AutoInventoryBackend.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
@@ -61,6 +62,20 @@ builder.Services.AddMemoryCache();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 builder.Services.AddScoped<ILoginBackoffService, LoginBackoffService>();
+builder.Services.AddSingleton<IIpAddressAccessor, IpAddressAccessor>();
+builder.Services.AddHostedService<AuthMetricAggregatorService>();
+builder.Services.AddHostedService<MlAnomalyDetectionService>();
+
+builder.Services.Configure<MlSettings>(builder.Configuration.GetSection("ML"));
+builder.Services.AddMemoryCache();
+builder.Services.AddSingleton<IAnomalyGateService, AnomalyGateService>();
+builder.Services.AddHttpClient("ml", (sp, client) =>
+{
+    var cfg = sp.GetRequiredService<IOptions<MlSettings>>().Value;
+    client.BaseAddress = new Uri(cfg.ServiceBaseUrl);
+});
+
+
 
 builder.Services.AddControllers();
 
